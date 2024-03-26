@@ -38,39 +38,6 @@ class VehicleController {
       next(err);
     }
   }
-
-  async post(req, res, next) {
-    try {
-      const result = await VehicleService.create({ ...req.body });
-      return res.json(result);
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  async put(req, res, next) {
-    try {
-      const {
-        params: { id },
-        body,
-      } = req;
-      // TODO: here we should use JOI to validate schema
-      const result = await VehicleService.update(id, body);
-      return res.json(result);
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  async delete(req, res, next) {
-    try {
-      const { id } = req.params;
-      const result = await VehicleService.delete(id);
-      return res.json(result);
-    } catch (err) {
-      next(err);
-    }
-  }
 }
 
 module.exports = new VehicleController();

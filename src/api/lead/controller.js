@@ -35,7 +35,6 @@ class LeadController {
     async put( req, res, next) {
         try {
           const { params: { id }, body } = req;
-          // TODO: here we should use JOI to validate schema
           const result = await LeadService.update(id, body);
           return res.json(result);
         } catch (err) {

@@ -1,7 +1,6 @@
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
-const jwt = require('jsonwebtoken')
-
+const jwt = require("jsonwebtoken");
 
 const conn = {
   MONGO_DB_USER: "appuser",
@@ -29,13 +28,29 @@ class DatabaseService {
     return await collection.findOne({ _id: new ObjectId(id) });
   }
 
+  async getByIdProduct(collectionName, idproduct) {
+    const collection = this.db.collection(collectionName);
+    return await collection.findOne({ _id: new ObjectId(idproduct.idproduct) });
+  }
+
   async getByName(collectionName, name) {
     try {
       const collection = this.db.collection(collectionName);
-      const query = { name: { $regex: new RegExp(name), '$options': 'i' } };
+      const query = { name: { $regex: new RegExp(name), $options: "i" } };
       return await collection.find(query).toArray();
     } catch (error) {
-      console.error('Error en getByName:', error);
+      console.error("Error en getByName:", error);
+      throw error;
+    }
+  }
+
+  async getByDealerId(collectionName, id) {
+    try {
+      const collection = this.db.collection(collectionName);
+      const query = { dealerId: id.id };
+      return await collection.find(query).toArray();
+    } catch (error) {
+      console.error("Error in getByDealerId:", error);
       throw error;
     }
   }
@@ -70,7 +85,44 @@ class DatabaseService {
     };
   }
 
+  async updateProduct(collectionName, idproduct, value) {
+    delete value._id;
+    const options = {
+      upsert: false,
+    };
+
+    const collection = this.db.collection(collectionName);
+    const update = {
+      $set: value,
+    };
+    const { modifiedCount, upsertedId, upsertedCount, matchedCount } =
+      await collection.updateOne(
+        { _id: new ObjectId(idproduct.idproduct) },
+        update,
+        options
+      );
+
+    return {
+      modifiedCount,
+      upsertedId,
+      upsertedCount,
+      matchedCount,
+    };
+  }
+
   async delete(collectionName, query, multi = false) {
+    const collection = this.db.collection(collectionName);
+
+    const { deletedCount } = await collection.deleteOne({
+      _id: new ObjectId(query.idproduct),
+    });
+
+    return {
+      deletedCount,
+    };
+  }
+
+  async deleteProduct(collectionName, query, multi = false) {
     const collection = this.db.collection(collectionName);
 
     const { deletedCount } = await collection.deleteOne({
@@ -102,7 +154,7 @@ class DatabaseService {
           throw Error("incorrect password");
         }
       }
-      return dealer
+      return dealer;
     } catch (err) {
       console.log(err);
       res.status(400).send("error, user not created");
