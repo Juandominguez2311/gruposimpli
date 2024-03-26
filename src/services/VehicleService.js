@@ -1,9 +1,23 @@
 const DatabaseService = require("./DatabaseService");
+const RedisService = require('./RedisService')
 
 class VehicleService {
   async get() {
-    return DatabaseService.get("vehicle");
+    try {
+      const resultRedis = await RedisService.get("vehicle-list");
+      if (resultRedis) {
+        return resultRedis;
+      } else {
+        const result = await DatabaseService.get("vehicle");
+        await RedisService.set("vehicle-list", result);
+        return result;
+      }
+    } catch (err) {
+      console.log("Error al obtener los accesorios");
+      console.log(err);
+    }
   }
+
 
   async getById(id) {
     const query = { id };

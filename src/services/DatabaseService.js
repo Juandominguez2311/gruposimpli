@@ -1,6 +1,7 @@
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const RedisService = require('./RedisService')
 
 const conn = {
   MONGO_DB_USER: "appuser",

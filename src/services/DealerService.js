@@ -1,4 +1,5 @@
 const DatabaseService = require("./DatabaseService");
+const RedisService = require('./RedisService')
 
 class DealerService {
   //login & singup
@@ -45,12 +46,14 @@ class DealerService {
     return DatabaseService.getByIdProduct("vehicle", query);
   }
 
-  vehiclePost(body) {
+  async vehiclePost(body) {
+    await RedisService.delete("vehicle-list")
     return DatabaseService.create("vehicle", body);
   }
 
   async updateVehicle(idproduct, body) {
     const query = { idproduct };
+    await RedisService.delete("vehicle-list")
     return DatabaseService.updateProduct("vehicle", query, body);
   }
 
@@ -70,12 +73,14 @@ class DealerService {
     return DatabaseService.getByIdProduct("accesory", query);
   }
 
-  accesoryPost(body) {
+  async accesoryPost(body) {
+    await RedisService.delete("accesory-list")
     return DatabaseService.create("accesory", body);
   }
 
   async updateAccesory(idproduct, body) {
     const query = { idproduct };
+    await RedisService.delete("accesory-list")
     return DatabaseService.updateProduct("accesory", query, body);
   }
 
