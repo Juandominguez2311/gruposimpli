@@ -34,17 +34,21 @@ class RedisService {
   }
 
   set(key, value) {
+    try {
     return this.client.set(key, JSON.stringify(value));
+  } catch (error) {
+    console.log("error en set");
+    console.log(error);
+  }
   }
 
   delete(key) {
-    return new Promise((resolve, reject) => {
-      const { client } = this;
-      client.del(key, (err) => {
-        if (err) reject(err);
-        else resolve(true);
-      });
-    });
+    try {
+      return this.client.delete(key);
+    } catch (error) {
+      console.log("error en delete");
+      console.log(error);
+    }
   }
 }
 
